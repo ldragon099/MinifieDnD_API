@@ -22,10 +22,8 @@ jobs:
         java-version: 15
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-    - name: List working dir
-      run: ls -a
     - name: Deploy to Tomcat
       env:
         USER: ${{ secrets.TOMCAT_USER }}
         PASSWORD: ${{ secrets.TOMCAT_PASSWORD }} 
-      run: curl -v -u "$USER":"$PASSWORD" -T ./target/minifiednd_api.war "http://minifiednd.com:8880/manager/deploy?path=/minifiednd_api&update=true"
+      run: curl -v -u "$USER":"$PASSWORD" -T ./target/minifiednd_api.war "http://minifiednd.com:8880/manager/text/deploy?path=/minifiednd_api&update=true"
