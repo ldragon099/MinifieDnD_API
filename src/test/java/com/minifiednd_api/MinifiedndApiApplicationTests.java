@@ -9,7 +9,7 @@ class MinifiedndApiApplicationTests {
 
 	@Test
 	void contextLoads() {
-		Assert.isTrue(true);
+
 	}
 
 }

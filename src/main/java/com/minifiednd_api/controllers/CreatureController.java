@@ -1,9 +1,10 @@
-package com.minifiednd_api;
+package com.minifiednd_api.controllers;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.minifiednd_api.models.Creature;
+import com.minifiednd_api.services.CreatureService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +22,21 @@ public class CreatureController {
     }
 
     @GetMapping("/allCreatures")
-    public List<Map<String, Object>> getAllCreatures() {
+    public List<Object> getAllCreatures() {
         return creatureService.getAllCreatures();
+    }
+
+    @GetMapping("/filteredCreatures")
+    public List<Object>  getFilteredCreatures(
+            @RequestParam(required = false) String biome, @RequestParam(required = false) String location,
+            @RequestParam(defaultValue = "1") String distance) {
+        return creatureService.getFilteredCreatures(biome, location, distance);
+    }
+
+    @GetMapping("/flow2")
+    public List<Object> getFlow2(
+            @RequestParam(required = false) String biome, @RequestParam(required = false) String location,
+            @RequestParam(required = false) Integer random) {
+        return creatureService.getFlow2(biome, location, random);
     }
 }

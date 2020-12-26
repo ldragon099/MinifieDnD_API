@@ -1,4 +1,4 @@
-package com.minifiednd_api;
+package com.minifiednd_api.models;
 
 public class Creature {
 
