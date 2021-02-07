@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.minifiednd_api.models.Creature;
 import com.minifiednd_api.services.CreatureService;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +35,7 @@ public class CreatureController {
     }
 
     @GetMapping("/flow2")
+    @CrossOrigin("http://minifiednd.com:8880")
     public List<Object> getFlow2(
             @RequestParam(required = false) String biome, @RequestParam(required = false) String location,
             @RequestParam(required = false) Integer random) {
