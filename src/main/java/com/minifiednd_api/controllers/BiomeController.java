@@ -1,6 +1,7 @@
 package com.minifiednd_api.controllers;
 
 import com.minifiednd_api.services.BiomeService;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,6 +13,7 @@ public class BiomeController {
     BiomeService biomeService = new BiomeService( "bolt://minifiednd.com:7687", "neo4j", "goblinMonkeyBaby");
 
     @GetMapping("/allBiomes")
+    @CrossOrigin("http://localhost:3000")
     public List<Object> getAllBiomes() {
         return biomeService.getAllBiomes();
     }
