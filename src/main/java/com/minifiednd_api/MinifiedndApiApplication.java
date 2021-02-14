@@ -21,7 +21,8 @@ public class MinifiedndApiApplication extends SpringBootServletInitializer {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedOrigins("http://localhost:3000, http://minifiednd.com");
+				registry.addMapping("/allBioms").allowedOrigins("http://localhost:3000, http://minifiednd.com");
+				registry.addMapping("/flow2").allowedOrigins("http://localhost:3000, http://minifiednd.com");
 			}
 		};
 	}
