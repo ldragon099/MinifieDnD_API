@@ -1,5 +1,6 @@
 package com.minifiednd_api.services;
 
+import com.minifiednd_api.models.Creature;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
@@ -84,11 +85,6 @@ public class CreatureService implements AutoCloseable{
             return getAllCreatures();
         }
 
-//        List<Map<String, Object>> result = query(
-//                query,
-//                Map.of()
-//        );
-
         return result.stream().map(CreatureService::extractPropertiesAsObject).collect(Collectors.toList());
     }
 
@@ -114,12 +110,23 @@ public class CreatureService implements AutoCloseable{
 
         List<Object> list = result.stream().map(CreatureService::extractPropertiesAsObject).collect(Collectors.toList());
 
-        if(random != null) {
-            Collections.shuffle(list);
-            return list.subList(0, random);
-        }
+        list = RandomSubset(list, random);
 
         return list;
+    }
+
+    public static List<Object> RandomSubset(List<Object> list, Integer subsetLength) {
+        if(subsetLength != null) {
+            Collections.shuffle(list);
+            return list.subList(0, subsetLength);
+        }
+        return list;
+    }
+
+    public static Creature ConvertObjectToCreature(List<Object> list) {
+        Map<String,String> creatureMap = (Map<String,String>)list.get(0);
+        Creature creature = new Creature(0, creatureMap.get("name"), creatureMap.get("source"),creatureMap.get("size"),creatureMap.get("alignment"), creatureMap.get("cr"));
+        return creature;
     }
 
     private List<Map<String, Object>> query(String query, Map<String, Object> params) {
@@ -130,7 +137,7 @@ public class CreatureService implements AutoCloseable{
         }
     }
 
-    private static Object extractPropertiesAsObject(Map<String, Object> node) {
+    public static Object extractPropertiesAsObject(Map<String, Object> node) {
         return node.entrySet().iterator().next().getValue();
     }
 
