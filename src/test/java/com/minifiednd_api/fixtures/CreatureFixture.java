@@ -6,7 +6,7 @@ import java.util.*;
 
 public class CreatureFixture {
     public static Creature getCreature() {
-        return new Creature(0, "Cat", "mm 320", "Tiny", "Unaligned", "0");
+        return new Creature("Cat", "mm 320", "Tiny", "Unaligned", "0");
     }
 
     public static Object getCreatureAsObject() {

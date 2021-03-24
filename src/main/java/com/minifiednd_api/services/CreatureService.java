@@ -7,6 +7,7 @@ import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.Value;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +89,7 @@ public class CreatureService implements AutoCloseable{
         return result.stream().map(CreatureService::extractPropertiesAsObject).collect(Collectors.toList());
     }
 
-    public List<Object> getFlow2(String biome, String location, Integer random) {
+    public List<Creature> getFlow2(String biome, String location, Integer random) {
         String locationBiomeFilter = "(c1:Creature)-[:LIVES_IN]->(location:Location {name: $location})-[:IS_IN]->(biome:Biome {name: $biome})" +
                 " RETURN c1 AS creature";
         String locationFilter = "(c2:Creature)-[:LIVES_IN]->(location:Location {name: $location})" +
@@ -111,22 +112,28 @@ public class CreatureService implements AutoCloseable{
         List<Object> list = result.stream().map(CreatureService::extractPropertiesAsObject).collect(Collectors.toList());
 
         list = RandomSubset(list, random);
+        List<Creature> creatureList = ConvertObjectListToCreatureList(list);
 
-        return list;
+        return creatureList;
     }
 
     public static List<Object> RandomSubset(List<Object> list, Integer subsetLength) {
-        if(subsetLength != null) {
+        if(subsetLength != null && subsetLength <= list.size()) {
             Collections.shuffle(list);
             return list.subList(0, subsetLength);
         }
         return list;
     }
 
-    public static Creature ConvertObjectToCreature(List<Object> list) {
-        Map<String,String> creatureMap = (Map<String,String>)list.get(0);
-        Creature creature = new Creature(0, creatureMap.get("name"), creatureMap.get("source"),creatureMap.get("size"),creatureMap.get("alignment"), creatureMap.get("cr"));
-        return creature;
+    public static List<Creature> ConvertObjectListToCreatureList(List<Object> list) {
+        List<Creature> creatureList = new ArrayList<>();
+        for (Object object: list) {
+            @SuppressWarnings("unchecked")
+            Map<String,String> creatureMap = (Map<String,String>)object;
+            creatureList.add(new Creature(creatureMap.get("name"), creatureMap.get("source"),creatureMap.get("size"),creatureMap.get("alignment"), creatureMap.get("cr")));
+        }
+
+        return creatureList;
     }
 
     private List<Map<String, Object>> query(String query, Map<String, Object> params) {

@@ -19,7 +19,7 @@ public class CreatureController {
 
     @GetMapping("/creature")
     public Creature getCreature(@RequestParam(value = "name", defaultValue = "World") String name) {
-        return new Creature(counter.incrementAndGet(), String.format(template, counter.get()), "mm", "medium", "LG", "1/4");
+        return new Creature(String.format(template, counter.incrementAndGet()), "mm", "medium", "LG", "1/4");
     }
 
     @GetMapping("/allCreatures")
@@ -36,7 +36,7 @@ public class CreatureController {
 
     @GetMapping("/flow2")
     @CrossOrigin("http://minifiednd.com:8880")
-    public List<Object> getFlow2(
+    public List<Creature> getFlow2(
             @RequestParam(required = false) String biome, @RequestParam(required = false) String location,
             @RequestParam(required = false) Integer random) {
         return creatureService.getFlow2(biome, location, random);
