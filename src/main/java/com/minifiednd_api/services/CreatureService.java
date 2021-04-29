@@ -1,6 +1,7 @@
 package com.minifiednd_api.services;
 
 import com.minifiednd_api.models.Creature;
+import com.minifiednd_api.models.CreatureSet;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
@@ -38,55 +39,30 @@ public class CreatureService implements AutoCloseable{
         return result.stream().map(CreatureService::extractPropertiesAsObject).collect(Collectors.toList());
     }
 
-    public List<Object> getFilteredCreatures(String biome, String location, String distance) {
-//        String locationBiomeFilter = "(c1:Creature)-[:LIVES_IN]->(location:Location {name: \"%1$s\"})-[:IS_IN]->(biome:Biome {name: \"%2$s\"})" +
-//                                     " RETURN c1 AS creature";
-//        String locationFilter = "(c2:Creature)-[:LIVES_IN]->(location:Location {name: \"%1$s\"})" +
-//                                " RETURN c2 AS creature";
-//        String biomeFilter = "(c3:Creature)-[:LIVES_IN]->(biome:Biome {name: \"%1$s\"})" +
-//                             " RETURN c3 AS creature";
+    public CreatureSet getFilteredCreatures(String biome, String location, Integer random) {
         String locationBiomeFilter = "(c1:Creature)-[:LIVES_IN]->(location:Location {name: $location})-[:IS_IN]->(biome:Biome {name: $biome})" +
                 " RETURN c1 AS creature";
         String locationFilter = "(c2:Creature)-[:LIVES_IN]->(location:Location {name: $location})" +
                 " RETURN c2 AS creature";
         String biomeFilter = "(c3:Creature)-[:LIVES_IN]->(biome:Biome {name: $biome})" +
                 " RETURN c3 AS creature";
-
-//        String query = "MATCH ";
-//        final String union = " UNION MATCH ";
-//        if(location != null && !location.isBlank()) {
-//            if(biome != null && !biome.isBlank()) {
-//                query = String.format(query.concat(locationBiomeFilter), location, biome);
-//                query = String.format(query.concat(union + biomeFilter + union), biome);
-//            }
-//            query = String.format(query.concat(locationFilter), location);
-//        }
-//        else if(biome != null && !biome.isBlank()) {
-//            query = String.format(query.concat(biomeFilter), biome);
-//        }
-//        else {
-//            return getAllCreatures();
-//        }
-        List<Map<String, Object>> result;
-        if(location != null && !location.isBlank()) {
-            if(biome != null && !biome.isBlank()) {
-                result = query("MATCH " + locationBiomeFilter + " UNION MATCH " + locationFilter + " UNION MATCH " + biomeFilter,
-                        Map.of("location", location, "biome", biome));
-            }
-            else {
-                result = query("MATCH " + locationFilter,
-                        Map.of("location", location));
-            }
-        }
-        else if(biome != null && !biome.isBlank()) {
-            result = query("MATCH " + biomeFilter,
+        List<Map<String, Object>> locationBiomeResponse = query("MATCH " + locationBiomeFilter,
+                    Map.of("location", location, "biome", biome));
+            List<Object> locationBiomeList = locationBiomeResponse.stream().map(CreatureService::extractPropertiesAsObject).collect(Collectors.toList());
+            locationBiomeList = RandomSubset(locationBiomeList, (int) (random*(0.4)));
+            List<Map<String, Object>> locationResponse = query("MATCH " + locationFilter,
+                    Map.of("location", location));
+            List<Object> locationList = locationResponse.stream().map(CreatureService::extractPropertiesAsObject).collect(Collectors.toList());
+            locationList = RandomSubset(locationList, (int) (random*(0.3)));
+            List<Map<String, Object>> biomeResponse = query("MATCH " + biomeFilter,
                     Map.of("biome", biome));
-        }
-        else {
-            return getAllCreatures();
-        }
-
-        return result.stream().map(CreatureService::extractPropertiesAsObject).collect(Collectors.toList());
+            List<Object> biomeList = biomeResponse.stream().map(CreatureService::extractPropertiesAsObject).collect(Collectors.toList());
+            biomeList = RandomSubset(biomeList, (int) (random*(0.2)));
+            return new CreatureSet(
+                    ConvertObjectListToCreatureList(locationBiomeList),
+                    ConvertObjectListToCreatureList(locationList),
+                    ConvertObjectListToCreatureList(biomeList)
+                    );
     }
 
     public List<Creature> getFlow2(String biome, String location, Integer random) {
