@@ -13,7 +13,6 @@ public class BiomeController {
     BiomeService biomeService = new BiomeService( "bolt://minifiednd.com:7687", "neo4j", "goblinMonkeyBaby");
 
     @GetMapping("/allBiomes")
-    @CrossOrigin("http://localhost:3000")
     public List<Object> getAllBiomes() {
         return biomeService.getAllBiomes();
     }
