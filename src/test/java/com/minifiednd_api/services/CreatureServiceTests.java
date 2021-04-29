@@ -5,7 +5,6 @@ import com.minifiednd_api.models.Creature;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.junit.Assert;
 
 import java.util.Collections;
 import java.util.List;
